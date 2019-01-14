@@ -5,7 +5,6 @@ line1 = ['Helwan', 'Ain Helwan', 'Helwan University', 'Wadi Hof', 'Hadayek Helwa
 line2 = ['El-Mounib', 'Sakiat Mekky', 'Omm El-Masryeen', 'Giza', 'Faisal', 'Cairo University', 'El Bohoth', 'Dokki', 'Opera', 'Mohamed Naguib', 'Attaba', 'Masarra', 'Rod El-Farag', 'St. Teresa', 'Khalafawy', 'Mezallat', 'Kolleyyet El-Zeraa', 'Shubra El-Kheima']
 line3 = ['Al-Ahram', 'Koleyet El-Banat', 'Stadium', 'Fair Zone', 'Abbassiya', 'Abdou Pasha', 'El-Geish', 'Bab El-Shaaria']
 
-
 pos = {}
 for i, station in enumerate(line1):
     if station in ['Al-Shohadaa', 'Sadat']:
@@ -22,47 +21,110 @@ for i, station in enumerate(line2):
 for i, station in enumerate(line3):
     pos[station] = (1, 270 - (i * 10))
 
-metro = nx.Graph()
-metro.add_nodes_from(line1)
-metro.add_nodes_from(line2)
-metro.add_nodes_from(line3)
+metroStationsNetwork = nx.Graph()
+
+metroStationsNetwork.add_nodes_from(line1, line=1)
+metroStationsNetwork.add_nodes_from(line2, line=2)
+metroStationsNetwork.add_nodes_from(line3, line=3)
+
 for edge in zip(line1, line1[1:]):
-    metro.add_edge(*edge)
+    metroStationsNetwork.add_edge(*edge)
+
 for edge in zip(line2, line2[1:]):
-    metro.add_edge(*edge)
+    metroStationsNetwork.add_edge(*edge)
+
 for edge in zip(line3, line3[1:]):
-    metro.add_edge(*edge)
+    metroStationsNetwork.add_edge(*edge)
 
+metroStationsNetwork.add_edge('Masarra', 'Al-Shohadaa')
+metroStationsNetwork.add_edge('Al-Shohadaa', 'Attaba')
+metroStationsNetwork.add_edge('Attaba', 'Bab El-Shaaria')
+metroStationsNetwork.add_edge('Mohamed Naguib', 'Sadat')
+metroStationsNetwork.add_edge('Sadat', 'Opera')
 
+metroStationsNetwork.remove_edge('Mohamed Naguib', 'Opera')
+metroStationsNetwork.remove_edge('Masarra', 'Attaba')
 
-metro.add_edge('Masarra', 'Al-Shohadaa')
-metro.add_edge('Al-Shohadaa', 'Attaba')
-metro.add_edge('Attaba', 'Bab El-Shaaria')
-metro.add_edge('Mohamed Naguib', 'Sadat')
-metro.add_edge('Sadat', 'Opera')
-
-metro.remove_edge('Mohamed Naguib', 'Opera')
-metro.remove_edge('Masarra', 'Attaba')
-
-
-nx.draw(metro, pos, with_labels=True, font_size=8)
+# nx.draw(metroStationsNetwork, pos, with_labels=True, font_size=8)
 # pyplot.show()
-# pyplot.savefig(r'D:\Programming\Metro\fig.png')
+# pyplot.savefig(r'D:\Programming\MetroStationsNetwork\fig.png')
 
-def shortestPath(source, destination, metro=metro):
-    # return nx.all_shortest_paths(metro, source, destination)
-    return nx.shortest_path_length(metro, source, destination)
-def main():
-    source = input('Enter source: ')
-    destination = input('Enter destination: ')
-    print(shortestPath(source, destination))
-    print('\n\n')
-    # print([p for p in nx.all_shortest_paths(metro, source, destination)])
-    again = input('Again?\n')
-    if again == 'y':
-        print('\n\n')
-        main()
+
+def shortestPath(source, destination):
+
+    return nx.shortest_path_length(metroStationsNetwork, source, destination)
+
+def path(source, destination):
+
+    paths =  [x for x in nx.all_shortest_paths(metroStationsNetwork, source, destination)]
+
+    if len(paths) > 1:
+        scores = [0 for i in paths]
+
+        for i, path in enumerate(paths):
+            prevLine = metroStationsNetwork.node[path[0]]['line']
+
+            for station in path[1:]:
+                if station in ['Al-Shohadaa', 'Attaba', 'Sadat']:
+                    continue
+
+                currentLine = metroStationsNetwork.node[station]['line']
+                if currentLine != prevLine:
+                    scores[i] += 1
+
+        return paths[scores.index(min(scores))]
+
     else:
-        SystemExit
+        return paths[0]
+
+def main():
+    while True:
+
+        while True:
+            source = input('Enter source: ')
+            destination = input('Enter destination: ')
+            
+            try:
+                numberStations = shortestPath(source, destination)
+
+            except nx.exception.NodeNotFound:
+                print('Please review your input and spelling, either {0} or {1} is not correctly spelled.\n\n'.format(source, destination))
+
+            else:
+                break
+
+        print('', 'Number of stations:', numberStations, sep='\n')
+        print()
+
+        if numberStations <= 9:
+            print('Yellow ticket')
+
+        elif numberStations <= 16:
+            print('Green ticket')
+
+        else:
+            print('Red ticket')
+
+        print()
+        print('Your path will be:')
+        for i, s in enumerate(path(source, destination)):
+            if i == 0:
+                print(s, end='')
+            else:
+                print(' >> ', end='')
+                print(s, end='')
+
+        print('\n')
+        again = input('Again?\n("y" or "n")\n\n')
+
+        if again == 'y':
+            print('\n\n')
+            continue
+
+        else:
+            break
+
+    SystemExit
+
 if __name__ == '__main__':
     main()
