@@ -81,6 +81,12 @@ def path(source, destination):
         return paths[0]
 
 def main():
+
+    line1 = path('New El-Marg', 'Helwan')
+    line2 = path('Shubra El-Kheima', 'El-Mounib')
+    line3 = path('Al-Ahram', 'Attaba')
+
+
     while True:
 
         while True:
