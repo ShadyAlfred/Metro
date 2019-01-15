@@ -79,6 +79,7 @@ def path(source, destination):
         return paths[0]
 
 def main():
+    import os
     import json
     from colorama import init, Fore, Back, Style
     init()
@@ -129,7 +130,7 @@ def main():
                 print(Fore.RED, end='')
                 print('Please review your input and spelling, either {0} or {1} is not correctly spelled.\n'.format(source, destination))
                 input('Press ENTER to retype your input.')
-                print('\x1b[2J', end='')
+                os.system('cls')
 
 
             else:
@@ -164,7 +165,7 @@ def main():
         again = input()
 
         if again == 'y':
-            print('\x1b[2J', end='')
+            os.system('cls')
             continue
 
         else:
