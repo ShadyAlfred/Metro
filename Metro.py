@@ -154,7 +154,8 @@ def main():
 
         print('\n' + Fore.CYAN)
         print('Again?\n("y" or "n")\n\n')
-        again = input(Fore.RESET)
+        print(Fore.RESET, end='')
+        again = input()
 
         if again == 'y':
             print('\x1b[2J', end='')
