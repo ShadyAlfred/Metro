@@ -1,8 +1,6 @@
 import networkx as nx
-from colorama import init, Fore, Back, Style
 # import matplotlib.pyplot as pyplot
 
-init()
 
 line1 = ['Helwan', 'Ain Helwan', 'Helwan University', 'Wadi Hof', 'Hadayek Helwan', 'El-Maasara', 'Tora El-Asmant', 'Kozzika', 'Tora El-Balad', 'Sakanat El-Maadi', 'Maadi', 'Hadayek El-Maadi', 'Dar El-Salam', "El-Zahraa'", 'Mar Girgis', 'El-Malek El-Saleh', 'Al-Sayeda Zeinab', 'Saad Zaghloul', 'Sadat', 'Nasser', 'Orabi', 'Al-Shohadaa', 'Ghamra', 'El-Demerdash', 'Manshiet El-Sadr', 'Kobri El-Qobba', 'Hammamat El-Qobba', 'Saray El-Qobba', 'Hadayeq El-Zaitoun', 'Helmeyet El-Zaitoun', 'El-Matareyya', 'Ain Shams', 'Ezbet El-Nakhl', 'El-Marg', 'New El-Marg']
 line2 = ['El-Mounib', 'Sakiat Mekky', 'Omm El-Masryeen', 'Giza', 'Faisal', 'Cairo University', 'El Bohoth', 'Dokki', 'Opera', 'Mohamed Naguib', 'Attaba', 'Masarra', 'Rod El-Farag', 'St. Teresa', 'Khalafawy', 'Mezallat', 'Kolleyyet El-Zeraa', 'Shubra El-Kheima']
@@ -81,11 +79,13 @@ def path(source, destination):
         return paths[0]
 
 def main():
+    import json
+    from colorama import init, Fore, Back, Style
+    init()
 
-    line1 = path('New El-Marg', 'Helwan')
-    line2 = path('Shubra El-Kheima', 'El-Mounib')
-    line3 = path('Al-Ahram', 'Attaba')
-
+    line1 = json.loads(open('Line1.json').read())
+    line2 = json.loads(open('Line2.json').read())
+    line3 = json.loads(open('Line3.json').read())
 
     while True:
 
