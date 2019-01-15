@@ -1,25 +1,28 @@
 import networkx as nx
-import matplotlib.pyplot as pyplot
+from colorama import init, Fore, Back, Style, AnsiToWin32
+# import matplotlib.pyplot as pyplot
+
+init()
 
 line1 = ['Helwan', 'Ain Helwan', 'Helwan University', 'Wadi Hof', 'Hadayek Helwan', 'El-Maasara', 'Tora El-Asmant', 'Kozzika', 'Tora El-Balad', 'Sakanat El-Maadi', 'Maadi', 'Hadayek El-Maadi', 'Dar El-Salam', "El-Zahraa'", 'Mar Girgis', 'El-Malek El-Saleh', 'Al-Sayeda Zeinab', 'Saad Zaghloul', 'Sadat', 'Nasser', 'Orabi', 'Al-Shohadaa', 'Ghamra', 'El-Demerdash', 'Manshiet El-Sadr', 'Kobri El-Qobba', 'Hammamat El-Qobba', 'Saray El-Qobba', 'Hadayeq El-Zaitoun', 'Helmeyet El-Zaitoun', 'El-Matareyya', 'Ain Shams', 'Ezbet El-Nakhl', 'El-Marg', 'New El-Marg']
 line2 = ['El-Mounib', 'Sakiat Mekky', 'Omm El-Masryeen', 'Giza', 'Faisal', 'Cairo University', 'El Bohoth', 'Dokki', 'Opera', 'Mohamed Naguib', 'Attaba', 'Masarra', 'Rod El-Farag', 'St. Teresa', 'Khalafawy', 'Mezallat', 'Kolleyyet El-Zeraa', 'Shubra El-Kheima']
 line3 = ['Al-Ahram', 'Koleyet El-Banat', 'Stadium', 'Fair Zone', 'Abbassiya', 'Abdou Pasha', 'El-Geish', 'Bab El-Shaaria']
 
-pos = {}
-for i, station in enumerate(line1):
-    if station in ['Al-Shohadaa', 'Sadat']:
-        pos[station] = (2.5, i * 10)
-    else:
-        pos[station] = (3, i * 10)
+# pos = {}
+# for i, station in enumerate(line1):
+#     if station in ['Al-Shohadaa', 'Sadat']:
+#         pos[station] = (2.5, i * 10)
+#     else:
+#         pos[station] = (3, i * 10)
 
-for i, station in enumerate(line2):
-    if station == 'Attaba':
-        pos[station] = (1.5, (i * 10) + 100)
-    else:
-        pos[station] = (2, (i * 10) + 100)
+# for i, station in enumerate(line2):
+#     if station == 'Attaba':
+#         pos[station] = (1.5, (i * 10) + 100)
+#     else:
+#         pos[station] = (2, (i * 10) + 100)
     
-for i, station in enumerate(line3):
-    pos[station] = (1, 270 - (i * 10))
+# for i, station in enumerate(line3):
+#     pos[station] = (1, 270 - (i * 10))
 
 metroStationsNetwork = nx.Graph()
 
@@ -81,44 +84,80 @@ def main():
     while True:
 
         while True:
-            source = input('Enter source: ')
-            destination = input('Enter destination: ')
-            
+            print(Fore.MAGENTA + Style.BRIGHT + 'Line 1: ', end='')
+
+            print(Fore.RESET + Back.MAGENTA + line1[0], end='')
+            for station in line1[1:]:
+                print(' >> ' + station, end='')
+
+
+            print(Back.RESET + Fore.YELLOW + '\n\nLine 2: ', end='')
+
+            print(Fore.RESET + Back.YELLOW + line2[0], end='')
+            for station in line2[1:]:
+                print(' >> ' + station, end='')
+
+
+            print(Back.RESET + Fore.GREEN + '\n\nLine 3: ', end='')
+
+            print(Fore.RESET + Back.GREEN + line3[0], end='')
+            for station in line3[1:]:
+                print(' >> ' + station, end='')
+
+            print('\n\n' + Back.RESET)
+
+            print(Fore.CYAN, end='')
+            print('Enter source: ', end='')
+            print(Fore.RESET, end='')
+            source = input().strip()
+
+            print(Fore.CYAN, end='')
+            print('Enter destination: ', end='')
+            print(Fore.RESET, end='')
+            destination = input().strip()
+
             try:
                 numberStations = shortestPath(source, destination)
 
             except nx.exception.NodeNotFound:
-                print('Please review your input and spelling, either {0} or {1} is not correctly spelled.\n\n'.format(source, destination))
+                print(Fore.RED, end='')
+                print('Please review your input and spelling, either {0} or {1} is not correctly spelled.\n'.format(source, destination))
+                input('Press ENTER to retype your input.')
+                print('\x1b[2J', end='')
+
 
             else:
                 break
 
-        print('', 'Number of stations:', numberStations, sep='\n')
-        print()
+        print(Fore.CYAN + '\nNumber of stations: ', end='')
+        print(Fore.RESET + Back.CYAN + str(numberStations), end='')
+        print(Back.RESET, end='\n\n')
 
         if numberStations <= 9:
-            print('Yellow ticket')
+            print(Fore.YELLOW + 'Yellow ticket')
 
         elif numberStations <= 16:
-            print('Green ticket')
+            print(Fore.GREEN + 'Green ticket')
 
         else:
-            print('Red ticket')
+            print(Fore.RED + 'Red ticket')
 
-        print()
-        print('Your path will be:')
+        print(Fore.CYAN)
+        print('Your path will be:\n')
+
         for i, s in enumerate(path(source, destination)):
             if i == 0:
-                print(s, end='')
+                print(Fore.MAGENTA + s, end='')
             else:
-                print(' >> ', end='')
-                print(s, end='')
+                print(Fore.RESET + Back.MAGENTA + ' >> ', end='')
+                print(Fore.MAGENTA + Back.RESET + s, end='')
 
-        print('\n')
-        again = input('Again?\n("y" or "n")\n\n')
+        print('\n' + Fore.CYAN)
+        print('Again?\n("y" or "n")\n\n')
+        again = input(Fore.RESET)
 
         if again == 'y':
-            print('\n\n')
+            print('\x1b[2J', end='')
             continue
 
         else:
