@@ -1,5 +1,5 @@
 import networkx as nx
-from colorama import init, Fore, Back, Style, AnsiToWin32
+from colorama import init, Fore, Back, Style
 # import matplotlib.pyplot as pyplot
 
 init()
