@@ -1,21 +1,14 @@
 import networkx as nx
+import json
+from os import system
+from colorama import init, Fore, Back, Style
+init()
 # import matplotlib.pyplot as pyplot
 
 
-line1 = ['Helwan', 'Ain Helwan', 'Helwan University', 'Wadi Hof', 'Hadayek Helwan',
-'El-Maasara', 'Tora El-Asmant', 'Kozzika', 'Tora El-Balad', 'Sakanat El-Maadi', 'Maadi',
-'Hadayek El-Maadi', 'Dar El-Salam', "El-Zahraa'", 'Mar Girgis', 'El-Malek El-Saleh', 'Al-Sayeda Zeinab',
-'Saad Zaghloul', 'Sadat', 'Nasser', 'Orabi', 'Al-Shohadaa', 'Ghamra', 'El-Demerdash', 'Manshiet El-Sadr',
-'Kobri El-Qobba', 'Hammamat El-Qobba', 'Saray El-Qobba', 'Hadayeq El-Zaitoun', 'Helmeyet El-Zaitoun',
-'El-Matareyya', 'Ain Shams', 'Ezbet El-Nakhl', 'El-Marg', 'New El-Marg']
-
-line2 = ['El-Mounib', 'Sakiat Mekky', 'Omm El-Masryeen', 'Giza', 'Faisal',
-'Cairo University', 'El Bohoth', 'Dokki', 'Opera', 'Mohamed Naguib',
-'Attaba', 'Masarra', 'Rod El-Farag', 'St. Teresa', 'Khalafawy', 'Mezallat',
-'Kolleyyet El-Zeraa', 'Shubra El-Kheima']
-
-line3 = ['Al-Ahram', 'Koleyet El-Banat', 'Stadium', 'Fair Zone', 'Abbassiya',
-'Abdou Pasha', 'El-Geish', 'Bab El-Shaaria']
+line1 = json.loads(open('Line1.json').read())
+line2 = json.loads(open('Line2.json').read())
+line3 = json.loads(open('Line3.json').read())
 
 # pos = {}
 # for i, station in enumerate(line1):
@@ -48,15 +41,6 @@ for edge in zip(line2, line2[1:]):
 for edge in zip(line3, line3[1:]):
     metroStationsNetwork.add_edge(*edge)
 
-metroStationsNetwork.add_edge('Masarra', 'Al-Shohadaa')
-metroStationsNetwork.add_edge('Al-Shohadaa', 'Attaba')
-metroStationsNetwork.add_edge('Attaba', 'Bab El-Shaaria')
-metroStationsNetwork.add_edge('Mohamed Naguib', 'Sadat')
-metroStationsNetwork.add_edge('Sadat', 'Opera')
-
-metroStationsNetwork.remove_edge('Mohamed Naguib', 'Opera')
-metroStationsNetwork.remove_edge('Masarra', 'Attaba')
-
 # nx.draw(metroStationsNetwork, pos, with_labels=True, font_size=8)
 # pyplot.show()
 # pyplot.savefig(r'D:\Programming\MetroStationsNetwork\fig.png')
@@ -66,7 +50,7 @@ def shortestPath(source, destination):
 
     return nx.shortest_path_length(metroStationsNetwork, source, destination)
 
-def path(source, destination):
+def getPath(source, destination):
 
     paths =  [x for x in nx.all_shortest_paths(metroStationsNetwork, source, destination)]
 
@@ -74,31 +58,38 @@ def path(source, destination):
         scores = [0 for i in paths]
 
         for i, path in enumerate(paths):
-            prevLine = metroStationsNetwork.node[path[0]]['line']
+            prevLine = metroStationsNetwork.node[path[0]]['line'] if path[0] not in ['Al-Shohadaa', 'Attaba', 'Sadat'] else None
 
             for station in path[1:]:
                 if station in ['Al-Shohadaa', 'Attaba', 'Sadat']:
                     continue
 
                 currentLine = metroStationsNetwork.node[station]['line']
-                if currentLine != prevLine:
+                if currentLine != prevLine and not prevLine is None:
                     scores[i] += 1
 
-        return paths[scores.index(min(scores))]
+                prevLine = currentLine
+
+        if min(scores) == max(scores):
+            return tuple(path for path in paths)
+        
+        else:
+            return paths[scores.index(min(scores))]
 
     else:
         return paths[0]
 
+def printPath(stationsList):
+    for i, station in enumerate(stationsList):
+
+        if i == 0:
+            print(Fore.MAGENTA + station, end='')
+
+        else:
+            print(Fore.RESET + Back.MAGENTA + ' >> ', end='')
+            print(Fore.MAGENTA + Back.RESET + station, end='')
+
 def main():
-    import os
-    import json
-    from colorama import init, Fore, Back, Style
-    init()
-
-    line1 = json.loads(open('Line1.json').read())
-    line2 = json.loads(open('Line2.json').read())
-    line3 = json.loads(open('Line3.json').read())
-
     while True:
 
         while True:
@@ -141,7 +132,7 @@ def main():
                 print(Fore.RED, end='')
                 print('Please review your input and spelling, either {0} or {1} is not correctly spelled.\n'.format(source, destination))
                 input('Press ENTER to retype your input.')
-                os.system('cls')
+                system('cls')
 
 
             else:
@@ -163,12 +154,19 @@ def main():
         print(Fore.CYAN)
         print('Your path will be:\n')
 
-        for i, s in enumerate(path(source, destination)):
-            if i == 0:
-                print(Fore.MAGENTA + s, end='')
-            else:
-                print(Fore.RESET + Back.MAGENTA + ' >> ', end='')
-                print(Fore.MAGENTA + Back.RESET + s, end='')
+        paths = getPath(source, destination)
+
+        if isinstance(paths, tuple):
+
+            for i, path in enumerate(paths):
+
+                printPath(path)
+
+                if i != len(paths) - 1:
+                    print(Fore.CYAN + '\n\nOr:\n')
+
+        else:
+            printPath(paths)
 
         print('\n' + Fore.CYAN)
         print('Again?\n("y" or "n")\n\n')
@@ -176,7 +174,7 @@ def main():
         again = input()
 
         if again == 'y':
-            os.system('cls')
+            system('cls')
             continue
 
         else:
