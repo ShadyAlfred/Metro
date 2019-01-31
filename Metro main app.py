@@ -1,8 +1,6 @@
 import networkx as nx
 import json
-from os import system
-from colorama import init, Fore, Back, Style
-init()
+
 # import matplotlib.pyplot as pyplot
 
 
@@ -79,7 +77,12 @@ def getPath(source, destination):
     else:
         return paths[0]
 
-def printPath(stationsList):
+def main():
+    from os import system
+    from colorama import init, Fore, Back, Style
+    init()
+    
+    def printPath(stationsList):
     for i, station in enumerate(stationsList):
 
         if i == 0:
@@ -88,8 +91,7 @@ def printPath(stationsList):
         else:
             print(Fore.RESET + Back.MAGENTA + ' >> ', end='')
             print(Fore.MAGENTA + Back.RESET + station, end='')
-
-def main():
+    
     while True:
 
         while True:
