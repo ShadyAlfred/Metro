@@ -78,19 +78,21 @@ def getPath(source, destination):
         return paths[0]
 
 def main():
+
     from os import system
     from colorama import init, Fore, Back, Style
+
     init()
     
     def printPath(stationsList):
-    for i, station in enumerate(stationsList):
+        for i, station in enumerate(stationsList):
 
-        if i == 0:
-            print(Fore.MAGENTA + station, end='')
+            if i == 0:
+                print(Fore.MAGENTA + station, end='')
 
-        else:
-            print(Fore.RESET + Back.MAGENTA + ' >> ', end='')
-            print(Fore.MAGENTA + Back.RESET + station, end='')
+            else:
+                print(Fore.RESET + Back.MAGENTA + ' >> ', end='')
+                print(Fore.MAGENTA + Back.RESET + station, end='')
     
     while True:
 
